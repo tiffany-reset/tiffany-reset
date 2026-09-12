@@ -1,0 +1,17 @@
+{
+  "name": "The Tiffany Reset",
+  "short_name": "Tiffany Reset",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f4f0",
+  "theme_color": "#8d6cc5",
+  "description": "A playful self-initiation and self-trust companion.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
