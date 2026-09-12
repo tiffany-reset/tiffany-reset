@@ -1,258 +1,2499 @@
-const CACHE = "tiffany-reset-v8";
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Tiffany Reset</title>
 
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE).then(cache =>
-      cache.addAll([
-        "./",
-        "./index.html",
-        "./manifest.json",
-        "./icon.svg"
-      ])
-    )
-  );
-});
+<meta name="theme-color" content="#8d6cc5">
+<meta name="description" content="A playful personal self-trust and initiation app.">
 
-self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
-});body{padding-bottom:78px}
-.app{max-width:680px}
-header{padding:18px 16px 10px}
-header h1{font-size:25px;line-height:1.08}
-.tabs{display:none}
-.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:25;background:rgba(255,255,255,.96);border-top:1px solid #e7e0e8;display:grid;grid-template-columns:repeat(5,1fr);padding:7px 5px calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(12px)}
-.bottomnav button{border:0;background:transparent;color:#756f79;font-size:11px;padding:7px 2px;border-radius:12px}
-.bottomnav button.active{background:#f1e8ff;color:#6c4aa8;font-weight:800}
-.bottomnav span{display:block;font-size:19px;line-height:20px}
-.heroMove{background:linear-gradient(135deg,#fff,#faf5ff);border:1px solid #e5d9f2}
-.heroMove .primary{box-shadow:0 8px 20px rgba(141,108,197,.22)}
-.quickrow{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.tap{min-height:52px;font-weight:700}
-@media(min-width:681px){.bottomnav{max-width:680px;left:50%;transform:translateX(-50%);border-radius:18px 18px 0 0}}
-</style></head>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+
+<style>
+:root{
+  --bg:#f7f4f0;
+  --card:#ffffff;
+  --ink:#252229;
+  --muted:#756f79;
+  --purple:#8d6cc5;
+  --purple-dark:#6c4aa8;
+  --soft:#f1e8ff;
+  --border:#e5dfe8;
+  --green:#4f9d69;
+  --yellow:#e5a83a;
+  --shadow:0 8px 22px rgba(50,40,60,.08);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  padding-bottom:82px;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:680px;
+  margin:0 auto;
+}
+
+header{
+  padding:22px 18px 12px;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.pill{
+  display:inline-block;
+  background:var(--soft);
+  color:var(--purple-dark);
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.05em;
+}
+
+h1,
+h2,
+h3{
+  margin:0 0 8px;
+}
+
+h1{
+  font-size:27px;
+  line-height:1.1;
+}
+
+h2{
+  font-size:20px;
+}
+
+h3{
+  font-size:16px;
+}
+
+.sub{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:16px;
+  margin:10px 14px;
+  box-shadow:var(--shadow);
+}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:10px 13px;
+  font-weight:700;
+}
+
+.primary{
+  background:var(--purple);
+  color:#fff;
+}
+
+.primary:hover{
+  background:var(--purple-dark);
+}
+
+.primary.big,
+.secondary.big{
+  width:100%;
+  min-height:52px;
+  font-size:15px;
+}
+
+.secondary{
+  background:#f5f1f7;
+  color:var(--ink);
+  border:1px solid var(--border);
+}
+
+.choice,
+.action{
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--ink);
+  text-align:left;
+}
+
+.choice:hover,
+.action:hover{
+  background:var(--soft);
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.tabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:8px 14px 10px;
+  scrollbar-width:none;
+}
+
+.tabs::-webkit-scrollbar{
+  display:none;
+}
+
+.tabs button{
+  white-space:nowrap;
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:12px;
+  padding:8px 10px;
+}
+
+.tabs button.active{
+  background:var(--soft);
+  color:var(--purple-dark);
+  font-weight:800;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.quote{
+  background:#faf7ff;
+  border:1px solid #e8ddf5;
+  border-radius:12px;
+  padding:12px;
+  line-height:1.45;
+}
+
+.pocket{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  margin-top:9px;
+}
+
+.pockethead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.task{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  padding:7px 0;
+  font-size:14px;
+}
+
+.task input{
+  width:18px;
+  height:18px;
+  margin:0;
+  flex:none;
+}
+
+.task span.done{
+  text-decoration:line-through;
+  color:var(--muted);
+}
+
+.statline{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border-bottom:1px solid #eee9ef;
+  padding:9px 0;
+}
+
+.statline:last-child{
+  border-bottom:0;
+}
+
+.action{
+  min-height:70px;
+}
+
+.action b{
+  display:block;
+}
+
+.action small{
+  color:var(--muted);
+}
+
+.timegrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.timegrid label{
+  font-size:13px;
+  font-weight:700;
+}
+
+.timegrid input{
+  display:block;
+  width:100%;
+  margin-top:5px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px;
+  background:#fff;
+}
+
+textarea,
+input[type="text"],
+input:not([type]){
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px;
+  background:#fff;
+  color:var(--ink);
+}
+
+textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+.receipt,
+.reward,
+.pattern,
+.achievement,
+.zone{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px;
+  margin-top:8px;
+  background:#fff;
+}
+
+.zone.locked{
+  opacity:.55;
+}
+
+.challenge{
+  margin-top:8px;
+  background:#faf7ff;
+  border-radius:9px;
+  padding:8px;
+  font-size:12px;
+}
+
+.score{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.num{
+  font-size:34px;
+  font-weight:900;
+  color:var(--purple-dark);
+}
+
+.bar{
+  height:10px;
+  background:#eee9ef;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:12px;
+}
+
+.fill{
+  height:100%;
+  width:0;
+  background:var(--purple);
+  transition:width .3s ease;
+}
+
+.bottomnav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:25;
+  background:rgba(255,255,255,.97);
+  border-top:1px solid var(--border);
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  padding:7px 5px calc(7px + env(safe-area-inset-bottom));
+  backdrop-filter:blur(12px);
+}
+
+.bottomnav button{
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:11px;
+  padding:7px 2px;
+  border-radius:12px;
+}
+
+.bottomnav button.active{
+  background:var(--soft);
+  color:var(--purple-dark);
+  font-weight:800;
+}
+
+.bottomnav span{
+  display:block;
+  font-size:19px;
+  line-height:20px;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:92px;
+  transform:translateX(-50%);
+  background:#252229;
+  color:#fff;
+  padding:10px 15px;
+  border-radius:999px;
+  font-size:13px;
+  display:none;
+  z-index:50;
+  box-shadow:var(--shadow);
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(20,15,25,.45);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:40;
+  padding:16px;
+}
+
+.modalbox{
+  width:100%;
+  max-width:600px;
+  background:#fff;
+  border-radius:22px;
+  padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+@media(min-width:681px){
+  body{
+    padding-bottom:90px;
+  }
+
+  .bottomnav{
+    max-width:680px;
+    left:50%;
+    right:auto;
+    width:680px;
+    transform:translateX(-50%);
+    border-radius:18px 18px 0 0;
+  }
+}
+</style>
+</head>
+
 <body>
+
 <div class="app">
+
 <header>
-  <div class="row"><div><div class="pill">THE TIFFANY RESET</div><h1 id="greeting">Today is yours.</h1></div><button class="secondary" onclick="openCapacity()">⚡ Capacity</button></div>
+  <div class="row">
+    <div>
+      <div class="pill">THE TIFFANY RESET</div>
+      <h1 id="greeting">Today is yours.</h1>
+    </div>
+
+    <button class="secondary" onclick="openCapacity()">⚡ Capacity</button>
+  </div>
+
   <div class="sub" id="headerStats"></div>
 </header>
+
 <nav class="tabs">
-<button class="active" onclick="tab('today',this)">Today</button>
-<button onclick="tab('brain',this)">🧠 Brain</button>
-<button onclick="tab('plan',this)">⏰ Plan</button>
-<button onclick="tab('main',this)">👑 Me</button>
-<button onclick="tab('world',this)">🗺️ World</button>
-<button onclick="tab('rewards',this)">🎁 Rewards</button>
-<button onclick="tab('review',this)">📊 Review</button>
-<button onclick="tab('systems',this)">🧰 All Systems</button>
+  <button class="active" onclick="tab('today',this)">Today</button>
+  <button onclick="tab('brain',this)">🧠 Brain</button>
+  <button onclick="tab('plan',this)">⏰ Plan</button>
+  <button onclick="tab('main',this)">👑 Me</button>
+  <button onclick="tab('world',this)">🗺️ World</button>
+  <button onclick="tab('rewards',this)">🎁 Rewards</button>
+  <button onclick="tab('review',this)">📊 Review</button>
+  <button onclick="tab('systems',this)">🧰 All Systems</button>
 </nav>
+
 
 <main id="today">
-<section class="card">
-  <div class="row"><div><h2 id="modeTitle">Today's Mode</h2><div class="sub" id="modeDesc"></div></div><button class="secondary" onclick="openCapacity()">Change</button></div>
-</section>
 
 <section class="card">
-<h2>👉 JUST TELL ME WHAT TO DO</h2>
-<p class="sub">No planning. No negotiating. One next move.</p>
-<button class="primary big" onclick="justTell()">JUST TELL ME</button>
-<div id="nextMove" class="quote" style="margin-top:10px">Your next move will appear here.</div>
+  <div class="row">
+    <div>
+      <h2 id="modeTitle">Today's Mode</h2>
+      <div class="sub" id="modeDesc"></div>
+    </div>
+    <button class="secondary" onclick="openCapacity()">Change</button>
+  </div>
 </section>
 
-<section class="card"><h2>☀️ Your Day in Pockets</h2><div id="pockets"></div></section>
-
-<section class="card">
-<h2>🎯 Tiny Quest</h2><p class="sub">One small win. That's enough.</p>
-<div id="quest"></div>
-</section>
 
 <section class="card">
-<h2>⚖️ Life vs. Tiffany</h2>
-<div class="grid2"><button class="choice" onclick="addTiffany(1)">👑 Tiffany +1</button><button class="choice" onclick="addLife(1)">📋 Life +1</button></div>
-<div class="statline"><span>Tiffany choices</span><b id="tiffanyCount">0</b></div><div class="statline"><span>Life tasks</span><b id="lifeCount">0</b></div>
+  <h2>👉 JUST TELL ME WHAT TO DO</h2>
+  <p class="sub">No planning. No negotiating. One next move.</p>
+
+  <button class="primary big" onclick="justTell()">JUST TELL ME</button>
+
+  <div id="nextMove" class="quote" style="margin-top:10px">
+    Your next move will appear here.
+  </div>
 </section>
+
+
+<section class="card">
+  <h2>☀️ Your Day in Pockets</h2>
+  <div id="pockets"></div>
+</section>
+
+
+<section class="card">
+  <h2>🎯 Tiny Quest</h2>
+  <p class="sub">One small win. That's enough.</p>
+  <div id="quest"></div>
+</section>
+
+
+<section class="card">
+  <h2>⚖️ Life vs. Tiffany</h2>
+
+  <div class="grid2">
+    <button class="choice" onclick="addTiffany(1)">👑 Tiffany +1</button>
+    <button class="choice" onclick="addLife(1)">📋 Life +1</button>
+  </div>
+
+  <div class="statline">
+    <span>Tiffany choices</span>
+    <b id="tiffanyCount">0</b>
+  </div>
+
+  <div class="statline">
+    <span>Life tasks</span>
+    <b id="lifeCount">0</b>
+  </div>
+</section>
+
 </main>
+
 
 <main id="brain" class="hidden">
-<section class="card"><h2>🧠 Initiation Lab</h2><p class="sub">Train the skill of moving before your brain talks you out of it.</p>
-<div class="grid2">
-<button class="action" onclick="micro('Put feet on floor')"><b>1. Feet on floor</b><small>Just change position.</small></button>
-<button class="action" onclick="micro('Stand up')"><b>2. Stand up</b><small>Don't do the task yet.</small></button>
-<button class="action" onclick="micro('Walk to it')"><b>3. Walk to it</b><small>Get physically closer.</small></button>
-<button class="action" onclick="micro('Touch the item')"><b>4. Touch it</b><small>Start without finishing.</small></button>
-<button class="action" onclick="micro('10 seconds')"><b>5. Ten seconds</b><small>Stop after ten if you want.</small></button>
-<button class="action" onclick="micro('2 minutes')"><b>6. Two minutes</b><small>Make it smaller.</small></button>
-</div></section>
-<section class="card"><h2>🛑 Debate-Loop Interruption</h2><p class="sub">Catch yourself negotiating? Interrupt before the loop wins.</p><button class="primary big" onclick="interrupt()">INTERRUPT THE LOOP</button><div id="interruptResult" class="quote" style="margin-top:10px"></div></section>
-<section class="card"><h2>⚖️ Negotiation Court 😂</h2><p class="sub">Your brain gets one argument. Then the court rules.</p><div id="courtArg" class="quote">Call court.</div><div class="grid2"><button class="secondary" onclick="callCourt()">CALL COURT</button><button class="primary" onclick="verdict()">ISSUE VERDICT</button></div><div id="courtResult"></div></section>
-<section class="card"><h2>🧘 Regulate First</h2><p class="sub">If your nervous system is overloaded, regulation comes before productivity.</p><button class="secondary big" onclick="regulate()">REGULATE FIRST</button><div id="regulateResult"></div></section>
-<section class="card"><h2>🧩 Make It Smaller</h2><div id="ladder"></div></section>
+
+<section class="card">
+  <h2>🧠 Initiation Lab</h2>
+  <p class="sub">
+    Train the skill of moving before your brain talks you out of it.
+  </p>
+
+  <div class="grid2">
+
+    <button class="action" onclick="micro('Put feet on floor')">
+      <b>1. Feet on floor</b>
+      <small>Just change position.</small>
+    </button>
+
+    <button class="action" onclick="micro('Stand up')">
+      <b>2. Stand up</b>
+      <small>Don't do the task yet.</small>
+    </button>
+
+    <button class="action" onclick="micro('Walk to it')">
+      <b>3. Walk to it</b>
+      <small>Get physically closer.</small>
+    </button>
+
+    <button class="action" onclick="micro('Touch the item')">
+      <b>4. Touch it</b>
+      <small>Start without finishing.</small>
+    </button>
+
+    <button class="action" onclick="micro('10 seconds')">
+      <b>5. Ten seconds</b>
+      <small>Stop after ten if you want.</small>
+    </button>
+
+    <button class="action" onclick="micro('2 minutes')">
+      <b>6. Two minutes</b>
+      <small>Make it smaller.</small>
+    </button>
+
+  </div>
+</section>
+
+
+<section class="card">
+  <h2>🛑 Debate-Loop Interruption</h2>
+
+  <p class="sub">
+    Catch yourself negotiating? Interrupt before the loop wins.
+  </p>
+
+  <button class="primary big" onclick="interrupt()">
+    INTERRUPT THE LOOP
+  </button>
+
+  <div id="interruptResult" class="quote" style="margin-top:10px"></div>
+</section>
+
+
+<section class="card">
+  <h2>⚖️ Negotiation Court 😂</h2>
+
+  <p class="sub">
+    Your brain gets one argument. Then the court rules.
+  </p>
+
+  <div id="courtArg" class="quote">
+    Call court.
+  </div>
+
+  <div class="grid2" style="margin-top:10px">
+    <button class="secondary" onclick="callCourt()">CALL COURT</button>
+    <button class="primary" onclick="verdict()">ISSUE VERDICT</button>
+  </div>
+
+  <div id="courtResult"></div>
+</section>
+
+
+<section class="card">
+  <h2>🧘 Regulate First</h2>
+
+  <p class="sub">
+    If your nervous system is overloaded, regulation comes before productivity.
+  </p>
+
+  <button class="secondary big" onclick="regulate()">
+    REGULATE FIRST
+  </button>
+
+  <div id="regulateResult"></div>
+</section>
+
+
+<section class="card">
+  <h2>🧩 Make It Smaller</h2>
+  <div id="ladder"></div>
+</section>
+
 </main>
+
 
 <main id="plan" class="hidden">
-<section class="card"><h2>⏰ Time-of-Day Plan</h2><p class="sub">You don't have to hold the whole day in your head.</p><div class="timegrid">
-<label>Morning<input type="time" id="tmorning" onchange="saveTimes()"></label>
-<label>Midday<input type="time" id="tmidday" onchange="saveTimes()"></label>
-<label>Evening<input type="time" id="tevening" onchange="saveTimes()"></label>
-<label>Night<input type="time" id="tnight" onchange="saveTimes()"></label>
-</div><p class="sub" id="notifyStatus"></p></section>
-<section class="card"><h2>🔔 Reminder Pockets</h2><div id="reminderPockets"></div></section>
-<section class="card"><h2>🧴 Full Self-Care Routine</h2><div id="routineList"></div></section>
+
+<section class="card">
+  <h2>⏰ Time-of-Day Plan</h2>
+
+  <p class="sub">
+    You don't have to hold the whole day in your head.
+  </p>
+
+  <div class="timegrid">
+
+    <label>
+      Morning
+      <input type="time" id="tmorning" onchange="saveTimes()">
+    </label>
+
+    <label>
+      Midday
+      <input type="time" id="tmidday" onchange="saveTimes()">
+    </label>
+
+    <label>
+      Evening
+      <input type="time" id="tevening" onchange="saveTimes()">
+    </label>
+
+    <label>
+      Night
+      <input type="time" id="tnight" onchange="saveTimes()">
+    </label>
+
+  </div>
+
+  <p class="sub" id="notifyStatus"></p>
+</section>
+
+
+<section class="card">
+  <h2>🔔 Reminder Pockets</h2>
+  <div id="reminderPockets"></div>
+</section>
+
+
+<section class="card">
+  <h2>🧴 Full Self-Care Routine</h2>
+  <div id="routineList"></div>
+</section>
+
 </main>
+
 
 <main id="main" class="hidden">
-<section class="card"><h2>👑 Main Character Moment</h2><p class="sub">One choice that belongs to Tiffany—not fixing, pleasing, producing, or rescuing.</p><button class="primary big" onclick="mainMoment()">WHO AM I CHOOSING TODAY?</button><div id="mainMoment" class="quote" style="margin-top:10px"></div></section>
-<section class="card"><h2>🔋 Relationship Battery</h2><p class="sub">How much emotional energy did relationship/life stuff consume?</p><div class="grid3"><button class="choice" onclick="battery(100)">100%</button><button class="choice" onclick="battery(75)">75%</button><button class="choice" onclick="battery(50)">50%</button><button class="choice" onclick="battery(25)">25%</button><button class="choice" onclick="battery(0)">EMPTY</button></div><div id="batteryResult" class="quote"></div></section>
-<section class="card"><h2>🪞 Evidence Against the Lie</h2><p class="quote">“I can't seem to do anything for myself.”</p><p class="sub">Receipts beat the story.</p><div id="evidence"></div><button class="secondary" onclick="addEvidence()">ADD A RECEIPT</button></section>
-<section class="card"><h2>📝 Personal Playbook</h2><textarea id="playbook" placeholder="What works for me..."></textarea><button class="primary" style="margin-top:8px" onclick="savePlaybook()">SAVE PLAYBOOK</button></section>
+
+<section class="card">
+  <h2>👑 Main Character Moment</h2>
+
+  <p class="sub">
+    One choice that belongs to Tiffany—not fixing, pleasing,
+    producing, or rescuing.
+  </p>
+
+  <button class="primary big" onclick="mainMoment()">
+    WHO AM I CHOOSING TODAY?
+  </button>
+
+  <div id="mainMoment" class="quote" style="margin-top:10px"></div>
+</section>
+
+
+<section class="card">
+  <h2>🔋 Relationship Battery</h2>
+
+  <p class="sub">
+    How much emotional energy did relationship/life stuff consume?
+  </p>
+
+  <div class="grid3">
+    <button class="choice" onclick="battery(100)">100%</button>
+    <button class="choice" onclick="battery(75)">75%</button>
+    <button class="choice" onclick="battery(50)">50%</button>
+    <button class="choice" onclick="battery(25)">25%</button>
+    <button class="choice" onclick="battery(0)">EMPTY</button>
+  </div>
+
+  <div id="batteryResult" class="quote"></div>
+</section>
+
+
+<section class="card">
+  <h2>🪞 Evidence Against the Lie</h2>
+
+  <p class="quote">
+    “I can't seem to do anything for myself.”
+  </p>
+
+  <p class="sub">Receipts beat the story.</p>
+
+  <div id="evidence"></div>
+
+  <button class="secondary" onclick="addEvidence()">
+    ADD A RECEIPT
+  </button>
+</section>
+
+
+<section class="card">
+  <h2>📝 Personal Playbook</h2>
+
+  <textarea id="playbook" placeholder="What works for me..."></textarea>
+
+  <button class="primary" style="margin-top:8px" onclick="savePlaybook()">
+    SAVE PLAYBOOK
+  </button>
+</section>
+
 </main>
+
 
 <main id="world" class="hidden">
-<section class="card"><h2>🗺️ Unlockable Game World</h2><p class="sub">Progress unlocks places, challenges and rewards.</p><div id="worldMap" class="world"></div></section>
-<section class="card"><h2>🏆 Achievements</h2><div id="achievements"></div></section>
+
+<section class="card">
+  <h2>🗺️ Unlockable Game World</h2>
+
+  <p class="sub">
+    Progress unlocks places, challenges and rewards.
+  </p>
+
+  <div id="worldMap"></div>
+</section>
+
+
+<section class="card">
+  <h2>🏆 Achievements</h2>
+  <div id="achievements"></div>
+</section>
+
 </main>
+
 
 <main id="rewards" class="hidden">
-<section class="card"><h2>🎁 Reward Bank</h2><p class="sub">You choose the rewards. They don't have to be productive.</p><input id="rewardInput" placeholder="Add a reward you actually want"><button class="primary" style="margin-top:8px" onclick="addReward()">ADD REWARD</button><div id="rewardsList"></div></section>
-<section class="card"><h2>💰 Reward Wallet</h2><div class="score"><div class="num" id="rewardPts">0</div><div><b>Reward Points</b><div class="sub">25 points unlock a reward.</div></div></div><button class="secondary" style="margin-top:10px" onclick="redeem()">REDEEM</button><div id="redeemResult"></div></section>
-<section class="card"><h2>🏆 Trophy Room</h2><div id="trophies"></div></section>
+
+<section class="card">
+  <h2>🎁 Reward Bank</h2>
+
+  <p class="sub">
+    You choose the rewards. They don't have to be productive.
+  </p>
+
+  <input id="rewardInput" placeholder="Add a reward you actually want">
+
+  <button class="primary" style="margin-top:8px" onclick="addReward()">
+    ADD REWARD
+  </button>
+
+  <div id="rewardsList"></div>
+</section>
+
+
+<section class="card">
+  <h2>💰 Reward Wallet</h2>
+
+  <div class="score">
+    <div class="num" id="rewardPts">0</div>
+
+    <div>
+      <b>Reward Points</b>
+      <div class="sub">25 points unlock a reward.</div>
+    </div>
+  </div>
+
+  <button class="secondary" style="margin-top:10px" onclick="redeem()">
+    REDEEM
+  </button>
+
+  <div id="redeemResult"></div>
+</section>
+
+
+<section class="card">
+  <h2>🏆 Trophy Room</h2>
+  <div id="trophies"></div>
+</section>
+
 </main>
+
 
 <main id="review" class="hidden">
-<section class="card"><h2>📊 Weekly Show-Up Score</h2><div class="score"><div class="num" id="showScore">0%</div><div class="sub">Showing up counts more than perfection.</div></div><div class="bar"><div class="fill" id="showFill"></div></div></section>
-<section class="card"><h2>📅 Weekly Recap</h2><div id="weeklyRecap"></div></section>
-<section class="card"><h2>🔍 Pattern Finder</h2><div id="patterns"></div></section>
-<section class="card"><h2>❓ Why Didn't It Happen?</h2><p class="sub">No shame. Find the friction.</p><div class="grid2"><button class="choice" onclick="friction('too tired')">Too tired</button><button class="choice" onclick="friction('too overwhelmed')">Too overwhelmed</button><button class="choice" onclick="friction('forgot')">Forgot</button><button class="choice" onclick="friction('debate loop')">Debate loop</button><button class="choice" onclick="friction('emotionally spent')">Emotionally spent</button><button class="choice" onclick="friction('other')">Other</button></div><div id="frictionResult"></div></section>
+
+<section class="card">
+  <h2>📊 Weekly Show-Up Score</h2>
+
+  <div class="score">
+    <div class="num" id="showScore">0%</div>
+
+    <div class="sub">
+      Showing up counts more than perfection.
+    </div>
+  </div>
+
+  <div class="bar">
+    <div class="fill" id="showFill"></div>
+  </div>
+</section>
+
+
+<section class="card">
+  <h2>📅 Weekly Recap</h2>
+  <div id="weeklyRecap"></div>
+</section>
+
+
+<section class="card">
+  <h2>🔍 Pattern Finder</h2>
+  <div id="patterns"></div>
+</section>
+
+
+<section class="card">
+  <h2>❓ Why Didn't It Happen?</h2>
+
+  <p class="sub">No shame. Find the friction.</p>
+
+  <div class="grid2">
+
+    <button class="choice" onclick="friction('too tired')">
+      Too tired
+    </button>
+
+    <button class="choice" onclick="friction('too overwhelmed')">
+      Too overwhelmed
+    </button>
+
+    <button class="choice" onclick="friction('forgot')">
+      Forgot
+    </button>
+
+    <button class="choice" onclick="friction('debate loop')">
+      Debate loop
+    </button>
+
+    <button class="choice" onclick="friction('emotionally spent')">
+      Emotionally spent
+    </button>
+
+    <button class="choice" onclick="friction('other')">
+      Other
+    </button>
+
+  </div>
+
+  <div id="frictionResult"></div>
+</section>
+
 </main>
+
 
 <main id="systems" class="hidden">
-<section class="card"><h2>🧰 Master Systems Dashboard</h2><p class="sub">Every mechanic is connected here.</p><div id="systemDashboard"></div></section>
-<section class="card"><h2>🎲 Wildcard</h2><p class="sub">When you don't know what you need, let chance choose.</p><button class="primary big" onclick="wildcard()">GIVE ME A WILDCARD</button><div id="wildResult"></div></section>
-<section class="card"><h2>😴 Bad-Day Plan</h2><p class="sub">No broken streak. No punishment. Minimum viable Tiffany.</p><button class="secondary big" onclick="badDay()">ACTIVATE FUMES-ONLY PLAN</button><div id="badDayResult"></div></section>
+
+<section class="card">
+  <h2>🧰 Master Systems Dashboard</h2>
+
+  <p class="sub">
+    Every mechanic is connected here.
+  </p>
+
+  <div id="systemDashboard"></div>
+</section>
+
+
+<section class="card">
+  <h2>🎲 Wildcard</h2>
+
+  <p class="sub">
+    When you don't know what you need, let chance choose.
+  </p>
+
+  <button class="primary big" onclick="wildcard()">
+    GIVE ME A WILDCARD
+  </button>
+
+  <div id="wildResult"></div>
+</section>
+
+
+<section class="card">
+  <h2>😴 Bad-Day Plan</h2>
+
+  <p class="sub">
+    No broken streak. No punishment. Minimum viable Tiffany.
+  </p>
+
+  <button class="secondary big" onclick="badDay()">
+    ACTIVATE FUMES-ONLY PLAN
+  </button>
+
+  <div id="badDayResult"></div>
+</section>
+
 </main>
+
 </div>
+
+
 <nav class="bottomnav" id="bottomnav">
-<button class="active" onclick="mobileTab('today',this)"><span>🏠</span>Today</button>
-<button onclick="mobileTab('brain',this)"><span>🧠</span>Brain</button>
-<button onclick="mobileTab('main',this)"><span>💗</span>Me</button>
-<button onclick="mobileTab('world',this)"><span>🗺️</span>World</button>
-<button onclick="mobileTab('systems',this)"><span>☰</span>More</button>
+
+<button class="active" onclick="mobileTab('today',this)">
+  <span>🏠</span>
+  Today
+</button>
+
+<button onclick="mobileTab('brain',this)">
+  <span>🧠</span>
+  Brain
+</button>
+
+<button onclick="mobileTab('main',this)">
+  <span>💗</span>
+  Me
+</button>
+
+<button onclick="mobileTab('world',this)">
+  <span>🗺️</span>
+  World
+</button>
+
+<button onclick="mobileTab('systems',this)">
+  <span>☰</span>
+  More
+</button>
+
 </nav>
 
+
 <div class="toast" id="toast"></div>
-<div class="modal" id="capacityModal"><div class="modalbox"><h2>⚡ What's your capacity?</h2><p class="sub">This changes the bar—not your worth.</p><div class="grid2">
-<button class="choice" onclick="setMode('full')">🔥 FULL POWER</button><button class="choice" onclick="setMode('standard')">🟢 FUNCTIONING</button><button class="choice" onclick="setMode('low')">🟡 LOW CAPACITY</button><button class="choice" onclick="setMode('survival')">🪫 FUMES ONLY</button>
-</div><button class="secondary" style="margin-top:12px;width:100%" onclick="closeCapacity()">CLOSE</button></div></div>
+
+
+<div class="modal" id="capacityModal">
+
+<div class="modalbox">
+
+<h2>⚡ What's your capacity?</h2>
+
+<p class="sub">
+This changes the bar—not your worth.
+</p>
+
+<div class="grid2">
+
+<button class="choice" onclick="setMode('full')">
+🔥 FULL POWER
+</button>
+
+<button class="choice" onclick="setMode('standard')">
+🟢 FUNCTIONING
+</button>
+
+<button class="choice" onclick="setMode('low')">
+🟡 LOW CAPACITY
+</button>
+
+<button class="choice" onclick="setMode('survival')">
+🪫 FUMES ONLY
+</button>
+
+</div>
+
+<button
+class="secondary"
+style="margin-top:12px;width:100%"
+onclick="closeCapacity()">
+CLOSE
+</button>
+
+</div>
+</div>
+
 
 <script>
 
-function mobileTab(id,btn){
- document.querySelectorAll("main").forEach(x=>x.classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
- document.querySelectorAll(".bottomnav button").forEach(x=>x.classList.remove("active"));
- btn.classList.add("active");
- window.scrollTo({top:0,behavior:"smooth"});
- render();
+const KEY="tiffany-reset-master-v1";
+
+let S=JSON.parse(localStorage.getItem(KEY)||"null")||{
+  date:new Date().toISOString().slice(0,10),
+  mode:"standard",
+  xp:0,
+  courage:0,
+  rewardPts:0,
+  tasks:{},
+  wins:{},
+  tiffany:0,
+  life:0,
+  questDone:false,
+  quest:"",
+  evidence:[],
+  proof:[],
+  rewards:[
+    "Guilt-free nap",
+    "Favorite drink",
+    "Long bath",
+    "30 minutes outside",
+    "Small beauty purchase",
+    "Favorite show"
+  ],
+  times:{
+    morning:"08:00",
+    midday:"13:00",
+    evening:"19:00",
+    night:"21:30"
+  },
+  reminders:{
+    morning:true,
+    midday:true,
+    evening:true,
+    night:true
+  },
+  moves:{},
+  friction:{},
+  playbook:"",
+  battery:{},
+  court:{},
+  achievements:[],
+  trophies:[]
+};
+
+
+const save=()=>{
+  localStorage.setItem(KEY,JSON.stringify(S));
+};
+
+
+const today=()=>{
+  return new Date().toISOString().slice(0,10);
+};
+
+
+function ensure(){
+
+  if(S.date!==today()){
+
+    S.date=today();
+    S.questDone=false;
+    S.quest="";
+
+    save();
+  }
+
 }
 
-const KEY="tiffany-reset-master-v1";
-let S=JSON.parse(localStorage.getItem(KEY)||"null")||{
- date:new Date().toISOString().slice(0,10),mode:"standard",xp:0,courage:0,rewardPts:0,
- tasks:{},wins:{},tiffany:0,life:0,questDone:false,quest:"",evidence:[],proof:[],
- rewards:["Guilt-free nap","Favorite drink","Long bath","30 minutes outside","Small beauty purchase","Favorite show"],
- times:{morning:"08:00",midday:"13:00",evening:"19:00",night:"21:30"},reminders:{morning:true,midday:true,evening:true,night:true},
- moves:{},friction:{},playbook:"",battery:{},court:{},achievements:[],trophies:[]
-};
-const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
-const today=()=>new Date().toISOString().slice(0,10);
-function ensure(){if(S.date!==today()){S.date=today();S.questDone=false;S.quest="";save()}}
+
 ensure();
 
-const pockets={
- morning:{icon:"☀️",name:"Morning",items:["Somatic movement","Shake plate","Red light toner","Dry brush","Body roller"]},
- midday:{icon:"🌤️",name:"Midday",items:["Mendi — full session","Pulsetto — 10–20 min","Pulsetto — short reset","Mendi — light reset"]},
- evening:{icon:"🌆",name:"Evening",items:["Shower","Magnesium","Magnesium bath or foot soak","Gua sha","Rosehip oil","Hair inhibitor"]},
- night:{icon:"🌙",name:"Night",items:["Tuning forks","EMDR / grounding","Optional calm / sleep session"]}
-};
-const world=[
-[1,"🌱","Starting Point","Stop waiting for motivation.","Complete 1 tiny action.","First Step badge"],
-[2,"🧠","Brain Lab","Learn to interrupt the debate loop.","Interrupt the loop 3 times.","Brain Trainer badge"],
-[3,"💗","Self-Trust Garden","Collect receipts that you can count on yourself.","Add 5 evidence receipts.","Self-Trust Garden"],
-[4,"👑","Main Character City","Practice choosing Tiffany.","Log 5 Main Character Moments.","Main Character badge"],
-[5,"🔥","Courage Mountain","Act while resistance is present.","Earn 25 Courage XP.","Courage challenge pack"],
-[6,"✨","Unapologetically Me","Build identity, wants, boundaries and rest.","Complete 7 Tiffany-first actions.","Unapologetically Me"],
-[8,"🏰","The Tiffany Kingdom","Your whole system works together.","Reach Level 8.","Kingdom Mode"],
-[10,"🌌","Full Self-Trust","Progress no longer requires perfection.","Reach Level 10.","Full Self-Trust finale"]
-];
-const argumentsList=["“I need to feel motivated first.”","“I'll do it later.”","“It's only three seconds.”","“I have too much to do for myself.”","“Someone else needs me.”","“If I start, I have to finish everything.”","“I'll feel guilty if I rest.”","“I don't know where to start.”"];
-const mainMoments=["Say no without over-explaining.","Take care of your body because you deserve it.","Sit outside with music and do nothing productive.","Do the beauty thing you've been putting off.","Rest without earning it.","Ask yourself what you want.","Protect one hour that belongs only to you.","Choose the easier option without guilt."];
 
-function level(){return Math.max(1,Math.floor(S.xp/25)+1)}
-function addXP(n,reason=""){S.xp+=n;save();toast(`+${n} XP${reason?" • "+reason:""}`)}
-function addRewardPts(n){S.rewardPts+=n;save()}
-function toast(x){let t=document.getElementById("toast");t.textContent=x;t.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display="none",1800)}
-function tab(id,btn){document.querySelectorAll("main").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");render()}
-function openCapacity(){document.getElementById("capacityModal").style.display="flex"}function closeCapacity(){document.getElementById("capacityModal").style.display="none"}
-function setMode(m){S.mode=m;save();closeCapacity();toast("Capacity updated");render()}
-function modeText(){return {full:["FULL POWER","You have room for the fuller version of the routine."],standard:["FUNCTIONING","Enough capacity for normal expectations."],low:["LOW CAPACITY","Shrink the plan. One thing at a time."],survival:["FUMES ONLY","Minimum viable Tiffany. Regulation and essentials only."]}[S.mode]}
-function currentTasks(){return S.tasks[S.date]||[]}
-function toggleTask(t,checked){S.tasks[S.date]=S.tasks[S.date]||[];let a=S.tasks[S.date];if(checked&&!a.includes(t)){a.push(t);addXP(1,"Self-Choice");addRewardPts(1);S.evidence.unshift({date:S.date,text:"I initiated care: "+t});}else if(!checked){S.tasks[S.date]=a.filter(x=>x!==t)}save();render()}
+const pockets={
+
+  morning:{
+    icon:"☀️",
+    name:"Morning",
+    items:[
+      "Somatic movement",
+      "Shake plate",
+      "Red light toner",
+      "Dry brush",
+      "Body roller"
+    ]
+  },
+
+  midday:{
+    icon:"🌤️",
+    name:"Midday",
+    items:[
+      "Mendi — full session",
+      "Pulsetto — 10–20 min",
+      "Pulsetto — short reset",
+      "Mendi — light reset"
+    ]
+  },
+
+  evening:{
+    icon:"🌆",
+    name:"Evening",
+    items:[
+      "Shower",
+      "Magnesium",
+      "Magnesium bath or foot soak",
+      "Gua sha",
+      "Rosehip oil",
+      "Hair inhibitor"
+    ]
+  },
+
+  night:{
+    icon:"🌙",
+    name:"Night",
+    items:[
+      "Tuning forks",
+      "EMDR / grounding",
+      "Optional calm / sleep session"
+    ]
+  }
+
+};
+
+
+const world=[
+
+  [
+    1,
+    "🌱",
+    "Starting Point",
+    "Stop waiting for motivation.",
+    "Complete 1 tiny action.",
+    "First Step badge"
+  ],
+
+  [
+    2,
+    "🧠",
+    "Brain Lab",
+    "Learn to interrupt the debate loop.",
+    "Interrupt the loop 3 times.",
+    "Brain Trainer badge"
+  ],
+
+  [
+    3,
+    "💗",
+    "Self-Trust Garden",
+    "Collect receipts that you can count on yourself.",
+    "Add 5 evidence receipts.",
+    "Self-Trust Garden"
+  ],
+
+  [
+    4,
+    "👑",
+    "Main Character City",
+    "Practice choosing Tiffany.",
+    "Log 5 Main Character Moments.",
+    "Main Character badge"
+  ],
+
+  [
+    5,
+    "🔥",
+    "Courage Mountain",
+    "Act while resistance is present.",
+    "Earn 25 Courage XP.",
+    "Courage challenge pack"
+  ],
+
+  [
+    6,
+    "✨",
+    "Unapologetically Me",
+    "Build identity, wants, boundaries and rest.",
+    "Complete 7 Tiffany-first actions.",
+    "Unapologetically Me"
+  ],
+
+  [
+    8,
+    "🏰",
+    "The Tiffany Kingdom",
+    "Your whole system works together.",
+    "Reach Level 8.",
+    "Kingdom Mode"
+  ],
+
+  [
+    10,
+    "🌌",
+    "Full Self-Trust",
+    "Progress no longer requires perfection.",
+    "Reach Level 10.",
+    "Full Self-Trust finale"
+  ]
+
+];
+
+
+const argumentsList=[
+  "I need to feel motivated first.",
+  "I'll do it later.",
+  "It's only three seconds.",
+  "I have too much to do for myself.",
+  "Someone else needs me.",
+  "If I start, I have to finish everything.",
+  "I'll feel guilty if I rest.",
+  "I don't know where to start."
+];
+
+
+const mainMoments=[
+  "Say no without over-explaining.",
+  "Take care of your body because you deserve it.",
+  "Sit outside with music and do nothing productive.",
+  "Do the beauty thing you've been putting off.",
+  "Rest without earning it.",
+  "Ask yourself what you want.",
+  "Protect one hour that belongs only to you.",
+  "Choose the easier option without guilt."
+];
+
+
+function level(){
+  return Math.max(1,Math.floor(S.xp/25)+1);
+}
+
+
+function addXP(n,reason=""){
+
+  S.xp+=n;
+  save();
+
+  toast(
+    `+${n} XP${reason?" • "+reason:""}`
+  );
+
+}
+
+
+function addRewardPts(n){
+
+  S.rewardPts+=n;
+  save();
+
+}
+
+
+function toast(x){
+
+  const t=document.getElementById("toast");
+
+  t.textContent=x;
+  t.style.display="block";
+
+  clearTimeout(window.tt);
+
+  window.tt=setTimeout(()=>{
+    t.style.display="none";
+  },1800);
+
+}
+
+
+function tab(id,btn){
+
+  document.querySelectorAll("main")
+    .forEach(x=>x.classList.add("hidden"));
+
+  document.getElementById(id)
+    .classList.remove("hidden");
+
+  document.querySelectorAll(".tabs button")
+    .forEach(x=>x.classList.remove("active"));
+
+  btn.classList.add("active");
+
+  render();
+
+}
+
+
+function mobileTab(id,btn){
+
+  document.querySelectorAll("main")
+    .forEach(x=>x.classList.add("hidden"));
+
+  document.getElementById(id)
+    .classList.remove("hidden");
+
+  document.querySelectorAll(".bottomnav button")
+    .forEach(x=>x.classList.remove("active"));
+
+  btn.classList.add("active");
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+  render();
+
+}
+
+
+function openCapacity(){
+
+  document.getElementById("capacityModal")
+    .style.display="flex";
+
+}
+
+
+function closeCapacity(){
+
+  document.getElementById("capacityModal")
+    .style.display="none";
+
+}
+
+
+function setMode(m){
+
+  S.mode=m;
+  save();
+
+  closeCapacity();
+
+  toast("Capacity updated");
+
+  render();
+
+}
+
+
+function modeText(){
+
+  return {
+
+    full:[
+      "FULL POWER",
+      "You have room for the fuller version of the routine."
+    ],
+
+    standard:[
+      "FUNCTIONING",
+      "Enough capacity for normal expectations."
+    ],
+
+    low:[
+      "LOW CAPACITY",
+      "Shrink the plan. One thing at a time."
+    ],
+
+    survival:[
+      "FUMES ONLY",
+      "Minimum viable Tiffany. Regulation and essentials only."
+    ]
+
+  }[S.mode];
+
+}
+
+
+function currentTasks(){
+
+  return S.tasks[S.date]||[];
+
+}
+
+
+function esc(x){
+
+  return String(x)
+    .replace(/'/g,"\\'");
+
+}
+
+
+function toggleTask(t,checked){
+
+  S.tasks[S.date]=S.tasks[S.date]||[];
+
+  let a=S.tasks[S.date];
+
+  if(checked && !a.includes(t)){
+
+    a.push(t);
+
+    addXP(1,"Self-Choice");
+    addRewardPts(1);
+
+    S.evidence.unshift({
+      date:S.date,
+      text:"I initiated care: "+t
+    });
+
+  }
+
+  else if(!checked){
+
+    S.tasks[S.date]=a.filter(x=>x!==t);
+
+  }
+
+  save();
+  render();
+
+}
+
+
 function renderPockets(){
- const a=currentTasks(), arr=Object.entries(pockets);
- document.getElementById("pockets").innerHTML=arr.map(([k,p])=>{
-   let items=p.items;
-   if(S.mode==="survival")items=k==="morning"?["Hydration"]:k==="night"?["Tuning forks","Rest"]:["ONE nervous-system support","ONE thing that feels good"];
-   return `<div class="pocket"><div class="pockethead"><h3>${p.icon} ${p.name}</h3><span class="pill">${S.times[k]}</span></div>${items.map(t=>`<label class="task"><input type="checkbox" ${a.includes(t)?"checked":""} onchange="toggleTask('${esc(t)}',this.checked)"><span class="${a.includes(t)?"done":""}">${t}</span></label>`).join("")}</div>`
- }).join("")
+
+  const a=currentTasks();
+
+  const arr=Object.entries(pockets);
+
+  document.getElementById("pockets").innerHTML=
+
+    arr.map(([k,p])=>{
+
+      let items=[...p.items];
+
+      if(S.mode==="survival"){
+
+        items=
+          k==="morning"
+          ?["Hydration"]
+          :k==="night"
+          ?["Tuning forks","Rest"]
+          :[
+            "ONE nervous-system support",
+            "ONE thing that feels good"
+          ];
+
+      }
+
+      return `
+
+      <div class="pocket">
+
+        <div class="pockethead">
+
+          <h3>${p.icon} ${p.name}</h3>
+
+          <span class="pill">
+            ${S.times[k]}
+          </span>
+
+        </div>
+
+        ${items.map(t=>`
+
+          <label class="task">
+
+            <input
+              type="checkbox"
+              ${a.includes(t)?"checked":""}
+              onchange="toggleTask('${esc(t)}',this.checked)"
+            >
+
+            <span class="${a.includes(t)?"done":""}">
+              ${t}
+            </span>
+
+          </label>
+
+        `).join("")}
+
+      </div>
+
+      `;
+
+    }).join("");
+
 }
+
+
 function renderRoutine(){
- const all=Object.values(pockets).flatMap(x=>x.items);document.getElementById("routineList").innerHTML=all.map(t=>`<label class="task"><input type="checkbox" ${currentTasks().includes(t)?"checked":""} onchange="toggleTask('${esc(t)}',this.checked)"><span>${t}</span></label>`).join("");
+
+  const all=
+    Object.values(pockets)
+    .flatMap(x=>x.items);
+
+  document.getElementById("routineList").innerHTML=
+
+    all.map(t=>`
+
+      <label class="task">
+
+        <input
+          type="checkbox"
+          ${currentTasks().includes(t)?"checked":""}
+          onchange="toggleTask('${esc(t)}',this.checked)"
+        >
+
+        <span>${t}</span>
+
+      </label>
+
+    `).join("");
+
 }
-function renderReminders(){document.getElementById("reminderPockets").innerHTML=Object.keys(pockets).map(k=>`<div class="statline"><span>${pockets[k].icon} ${pockets[k].name}</span><span><b>${S.times[k]}</b> <button class="secondary" onclick="toggleReminder('${k}')">${S.reminders[k]?"🔔":"🔕"}</button></span></div>`).join("")}
-function toggleReminder(k){S.reminders[k]=!S.reminders[k];save();render()}
-function saveTimes(){["morning","midday","evening","night"].forEach(k=>S.times[k]=document.getElementById("t"+k).value);save();toast("Times saved");renderReminders()}
-function esc(x){return x.replace(/'/g,"\\'")}
-function quest(){if(!S.quest)S.quest=["Drink a full glass of water.","Do one thing you've been putting off for yourself.","Take 5 quiet minutes outside.","Use your tuning forks.","Do one 10-second action.","Ask: What do I want today?"][Math.floor(Math.random()*6)];document.getElementById("quest").innerHTML=`<div class="quote"><b>${S.quest}</b><br><button class="${S.questDone?"secondary":"primary"}" style="margin-top:8px" onclick="completeQuest()">${S.questDone?"✓ DONE":"I DID IT"}</button></div>`}
-function completeQuest(){if(S.questDone)return;S.questDone=true;S.xp+=5;S.rewardPts+=5;S.evidence.unshift({date:S.date,text:"I completed my Tiny Quest."});save();toast("+5 XP +5 Reward Points");render()}
-function justTell(){let pool=S.mode==="survival"?["Drink water.","Use tuning forks for 2 minutes.","Rest with the dogs.","Take 10 guilt-free minutes."]:S.mode==="low"?["Put your feet on the floor.","Stand up.","Walk to the thing.","Do the next 10-second action."]:["Do the next scheduled routine item.","Take the next 10-second action.","Do one Tiffany-first action.","Take 5 minutes outside."];let x=pool[Math.floor(Math.random()*pool.length)];document.getElementById("nextMove").innerHTML=`👉 <b>${x}</b><br><small>No optimizing. Just this.</small>`;S.moves.justTell=(S.moves.justTell||0)+1;addRewardPts(1);save()}
-function micro(x){S.moves[x]=(S.moves[x]||0)+1;S.xp+=2;S.rewardPts+=2;S.evidence.unshift({date:S.date,text:"I used a tiny initiation step: "+x});save();toast("+2 XP +2 Reward Points");render()}
-function interrupt(){S.moves.debate=(S.moves.debate||0)+1;S.xp+=1;S.rewardPts+=1;save();document.getElementById("interruptResult").innerHTML="<b>LOOP INTERRUPTED.</b><br>Don't solve the whole task. Put your body into motion for 3 seconds.";toast("Debate interrupted")}
-function callCourt(){S.court.argument=argumentsList[Math.floor(Math.random()*argumentsList.length)];save();document.getElementById("courtArg").innerHTML=`<b>THE BRAIN SAYS:</b><br>“${S.court.argument}”`}
-function verdict(){let v=["OBJECTION. Not an emergency.","DENIED. Motivation isn't required.","OVERRULED. You only owe yourself the first movement.","CASE DISMISSED. Tiffany gets care too.","SUSTAINED — but only for actual rest, not avoidance."];let x=v[Math.floor(Math.random()*v.length)];S.xp+=1;save();document.getElementById("courtResult").innerHTML=`<div class="quote"><b>VERDICT:</b> ${x}<br>Now take the smallest next action.</div>`}
-function regulate(){let r=["Tuning forks","Somatic movement","Outside + slow breathing","Pulsetto","Foot soak","Journal"];let x=r[Math.floor(Math.random()*r.length)];document.getElementById("regulateResult").innerHTML=`<div class="quote">Try <b>${x}</b>. Regulation first. Productivity can wait.</div>`}
-function renderLadder(){let steps=["Name the task","Make it one movement","Put feet on floor","Stand","Walk to it","Touch it","10 seconds","2 minutes"];document.getElementById("ladder").innerHTML=steps.map((x,i)=>`<div class="statline"><span>${i+1}. ${x}</span><button class="secondary" onclick="micro('${esc(x)}')">USE</button></div>`).join("")}
-function addTiffany(n){S.tiffany+=n;S.evidence.unshift({date:S.date,text:"I chose something for myself."});S.xp+=1;S.rewardPts+=1;save();render()}
-function addLife(n){S.life+=n;save();render()}
-function mainMoment(){let x=mainMoments[Math.floor(Math.random()*mainMoments.length)];document.getElementById("mainMoment").textContent=x;S.moves.main=(S.moves.main||0)+1;S.xp+=2;S.rewardPts+=2;S.evidence.unshift({date:S.date,text:"Main Character Moment: "+x});save()}
-function battery(n){S.battery[S.date]=n;save();document.getElementById("batteryResult").textContent=n<=25?"Battery depleted. Protection plan, not performance plan.":n<=50?"You're carrying a lot. Lower the bar.":n<=75?"Spend your capacity intentionally.":"You have room. Keep some for Tiffany."}
-function addEvidence(){let x=prompt("What is one receipt that proves the lie wrong?");if(!x)return;S.evidence.unshift({date:S.date,text:x});S.xp+=2;S.rewardPts+=2;save();toast("+2 Proof XP");render()}
-function savePlaybook(){S.playbook=document.getElementById("playbook").value;save();toast("Playbook saved")}
-function renderEvidence(){document.getElementById("evidence").innerHTML=(S.evidence||[]).slice(0,20).map(e=>`<div class="receipt">✓ <b>${e.date}</b><br>${e.text}</div>`).join("")||"<p class='sub'>Your receipts will live here.</p>"}
-function renderWorld(){document.getElementById("worldMap").innerHTML=world.map(z=>{let open=level()>=z[0];return `<div class="zone ${open?"":"locked"}"><h3>${z[1]} ${z[2]} ${open?"✓":"🔒"}</h3><div class="sub">${z[3]}</div><div class="challenge"><b>Challenge:</b> ${z[4]}<br><b>Reward:</b> ${z[5]}</div></div>`}).join("")}
-function renderAchievements(){let a=[["First Move",S.xp>=1,"Earn your first XP"],["Courage Starter",S.courage>=5,"Earn 5 Courage XP"],["Receipt Collector",S.evidence.length>=5,"Collect 5 receipts"],["Main Character",S.moves.main>=5,"Log 5 Main Character moments"],["Brain Trainer",S.moves.debate>=3,"Interrupt 3 loops"],["Quest Finisher",Object.values(S.wins).flat().length>=1||S.questDone,"Complete a quest"],["Level 5",level()>=5,"Reach Level 5"],["Kingdom",level()>=8,"Reach Level 8"]];document.getElementById("achievements").innerHTML=a.map(x=>`<div class="achievement ${x[1]?"":"locked"}">${x[1]?"🏆":"🔒"} <b>${x[0]}</b><div class="sub">${x[2]}</div></div>`).join("")}
-function addReward(){let x=document.getElementById("rewardInput").value.trim();if(!x)return;S.rewards.unshift(x);document.getElementById("rewardInput").value="";save();render()}
-function redeem(){if(S.rewardPts<25){document.getElementById("redeemResult").textContent=`You need ${25-S.rewardPts} more Reward Points.`;return}S.rewardPts-=25;let x=S.rewards[Math.floor(Math.random()*S.rewards.length)]||"a reward you want";save();document.getElementById("redeemResult").innerHTML=`<div class="quote">🎉 <b>UNLOCKED:</b> ${x}</div>`;render()}
-function renderRewards(){document.getElementById("rewardPts").textContent=S.rewardPts;document.getElementById("rewardsList").innerHTML=S.rewards.map((x,i)=>`<div class="reward">🎁 ${x}</div>`).join("");document.getElementById("trophies").innerHTML=(S.achievements||[]).map(x=>`<div class="achievement">🏆 ${x}</div>`).join("")||"<p class='sub'>Your trophy room is waiting.</p>"}
-function friction(x){S.friction[x]=(S.friction[x]||0)+1;save();document.getElementById("frictionResult").innerHTML=`<div class="quote">Logged: <b>${x}</b>. This is data, not a character judgment.</div>`;renderPatterns()}
-function renderPatterns(){let c={...S.friction};Object.entries(S.moves).forEach(([k,v])=>c[k]=(c[k]||0)+v);let a=Object.entries(c).sort((x,y)=>y[1]-x[1]).slice(0,8);document.getElementById("patterns").innerHTML=a.map(([k,v])=>`<div class="pattern"><b>${k}</b><br><span class="sub">${v} logged interaction${v==1?"":"s"}</span></div>`).join("")||"<p class='sub'>The app learns as you use it.</p>"}
-function renderReview(){let days=Object.keys(S.tasks).length,active=Object.values(S.tasks).filter(x=>x.length).length;let pct=Math.min(100,Math.round(active/Math.max(1,days)*100));document.getElementById("showScore").textContent=pct+"%";document.getElementById("showFill").style.width=pct+"%";document.getElementById("weeklyRecap").innerHTML=`<div class="statline"><span>Days with any self-care</span><b>${active}</b></div><div class="statline"><span>XP</span><b>${S.xp}</b></div><div class="statline"><span>Courage XP</span><b>${S.courage}</b></div><div class="statline"><span>Evidence receipts</span><b>${S.evidence.length}</b></div>`;renderPatterns()}
-function wildcard(){let x=["Take a guilt-free rest.","Go outside with music.","Use tuning forks.","Do one beauty/self-care action.","Write one honest sentence.","Do the smallest task you've been avoiding."][Math.floor(Math.random()*6)];document.getElementById("wildResult").innerHTML=`<div class="quote">🎲 <b>WILDCARD:</b> ${x}</div>`}
-function badDay(){S.mode="survival";save();document.getElementById("badDayResult").innerHTML="<div class='quote'>🪫 Fumes-only mode activated. The goal is care, not catching up.</div>";render()}
-function renderSystems(){let l=level();document.getElementById("systemDashboard").innerHTML=`<div class="statline"><span>⭐ XP</span><b>${S.xp}</b></div><div class="statline"><span>🔥 Courage XP</span><b>${S.courage}</b></div><div class="statline"><span>📈 Level</span><b>${l}</b></div><div class="statline"><span>🪞 Evidence</span><b>${S.evidence.length}</b></div><div class="statline"><span>👉 Just Tell Me uses</span><b>${S.moves.justTell||0}</b></div><div class="statline"><span>🛑 Debate interruptions</span><b>${S.moves.debate||0}</b></div><div class="statline"><span>⚖️ Court sessions</span><b>${S.moves.court||0}</b></div><div class="statline"><span>🎁 Reward Points</span><b>${S.rewardPts}</b></div>`}
+
+
+function renderReminders(){
+
+  document.getElementById("reminderPockets").innerHTML=
+
+    Object.keys(pockets).map(k=>`
+
+      <div class="statline">
+
+        <span>
+          ${pockets[k].icon}
+          ${pockets[k].name}
+        </span>
+
+        <span>
+
+          <b>${S.times[k]}</b>
+
+          <button
+            class="secondary"
+            onclick="toggleReminder('${k}')"
+          >
+            ${S.reminders[k]?"🔔":"🔕"}
+          </button>
+
+        </span>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+function toggleReminder(k){
+
+  S.reminders[k]=!S.reminders[k];
+
+  save();
+  render();
+
+}
+
+
+function saveTimes(){
+
+  ["morning","midday","evening","night"]
+    .forEach(k=>{
+      S.times[k]=document.getElementById("t"+k).value;
+    });
+
+  save();
+
+  toast("Times saved");
+
+  renderReminders();
+
+}
+
+
+function quest(){
+
+  if(!S.quest){
+
+    S.quest=[
+      "Drink a full glass of water.",
+      "Do one thing you've been putting off for yourself.",
+      "Take 5 quiet minutes outside.",
+      "Use your tuning forks.",
+      "Do one 10-second action.",
+      "Ask: What do I want today?"
+    ][Math.floor(Math.random()*6)];
+
+  }
+
+  document.getElementById("quest").innerHTML=`
+
+    <div class="quote">
+
+      <b>${S.quest}</b>
+
+      <br>
+
+      <button
+        class="${S.questDone?"secondary":"primary"}"
+        style="margin-top:8px"
+        onclick="completeQuest()"
+      >
+        ${S.questDone?"✓ DONE":"I DID IT"}
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+function completeQuest(){
+
+  if(S.questDone)return;
+
+  S.questDone=true;
+
+  S.xp+=5;
+  S.rewardPts+=5;
+
+  S.evidence.unshift({
+    date:S.date,
+    text:"I completed my Tiny Quest."
+  });
+
+  save();
+
+  toast("+5 XP +5 Reward Points");
+
+  render();
+
+}
+
+
+function justTell(){
+
+  let pool=
+
+    S.mode==="survival"
+
+    ?[
+      "Drink water.",
+      "Use tuning forks for 2 minutes.",
+      "Rest with the dogs.",
+      "Take 10 guilt-free minutes."
+    ]
+
+    :S.mode==="low"
+
+    ?[
+      "Put your feet on the floor.",
+      "Stand up.",
+      "Walk to the thing.",
+      "Do the next 10-second action."
+    ]
+
+    :[
+      "Do the next scheduled routine item.",
+      "Take the next 10-second action.",
+      "Do one Tiffany-first action.",
+      "Take 5 minutes outside."
+    ];
+
+  let x=
+    pool[Math.floor(Math.random()*pool.length)];
+
+  document.getElementById("nextMove").innerHTML=`
+
+    👉 <b>${x}</b>
+
+    <br>
+
+    <small>No optimizing. Just this.</small>
+
+  `;
+
+  S.moves.justTell=
+    (S.moves.justTell||0)+1;
+
+  addRewardPts(1);
+
+  save();
+
+}
+
+
+function micro(x){
+
+  S.moves[x]=(S.moves[x]||0)+1;
+
+  S.xp+=2;
+  S.rewardPts+=2;
+
+  S.evidence.unshift({
+    date:S.date,
+    text:"I used a tiny initiation step: "+x
+  });
+
+  save();
+
+  toast("+2 XP +2 Reward Points");
+
+  render();
+
+}
+
+
+function interrupt(){
+
+  S.moves.debate=
+    (S.moves.debate||0)+1;
+
+  S.xp+=1;
+  S.rewardPts+=1;
+
+  save();
+
+  document.getElementById("interruptResult").innerHTML=`
+
+    <b>LOOP INTERRUPTED.</b>
+
+    <br>
+
+    Don't solve the whole task.
+    Put your body into motion for 3 seconds.
+
+  `;
+
+  toast("Debate interrupted");
+
+}
+
+
+function callCourt(){
+
+  S.moves.court=
+    (S.moves.court||0)+1;
+
+  S.court.argument=
+    argumentsList[
+      Math.floor(Math.random()*argumentsList.length)
+    ];
+
+  save();
+
+  document.getElementById("courtArg").innerHTML=`
+
+    <b>THE BRAIN SAYS:</b>
+
+    <br>
+
+    “${S.court.argument}”
+
+  `;
+
+}
+
+
+function verdict(){
+
+  let v=[
+    "OBJECTION. Not an emergency.",
+    "DENIED. Motivation isn't required.",
+    "OVERRULED. You only owe yourself the first movement.",
+    "CASE DISMISSED. Tiffany gets care too.",
+    "SUSTAINED — but only for actual rest, not avoidance."
+  ];
+
+  let x=v[Math.floor(Math.random()*v.length)];
+
+  S.xp+=1;
+
+  save();
+
+  document.getElementById("courtResult").innerHTML=`
+
+    <div class="quote">
+
+      <b>VERDICT:</b> ${x}
+
+      <br>
+
+      Now take the smallest next action.
+
+    </div>
+
+  `;
+
+}
+
+
+function regulate(){
+
+  let r=[
+    "Tuning forks",
+    "Somatic movement",
+    "Outside + slow breathing",
+    "Pulsetto",
+    "Foot soak",
+    "Journal"
+  ];
+
+  let x=r[Math.floor(Math.random()*r.length)];
+
+  document.getElementById("regulateResult").innerHTML=`
+
+    <div class="quote">
+
+      Try <b>${x}</b>.
+
+      Regulation first.
+      Productivity can wait.
+
+    </div>
+
+  `;
+
+}
+
+
+function renderLadder(){
+
+  let steps=[
+    "Name the task",
+    "Make it one movement",
+    "Put feet on floor",
+    "Stand",
+    "Walk to it",
+    "Touch it",
+    "10 seconds",
+    "2 minutes"
+  ];
+
+  document.getElementById("ladder").innerHTML=
+
+    steps.map((x,i)=>`
+
+      <div class="statline">
+
+        <span>
+          ${i+1}. ${x}
+        </span>
+
+        <button
+          class="secondary"
+          onclick="micro('${esc(x)}')"
+        >
+          USE
+        </button>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+function addTiffany(n){
+
+  S.tiffany+=n;
+
+  S.evidence.unshift({
+    date:S.date,
+    text:"I chose something for myself."
+  });
+
+  S.xp+=1;
+  S.rewardPts+=1;
+
+  save();
+  render();
+
+}
+
+
+function addLife(n){
+
+  S.life+=n;
+
+  save();
+  render();
+
+}
+
+
+function mainMoment(){
+
+  let x=
+    mainMoments[
+      Math.floor(Math.random()*mainMoments.length)
+    ];
+
+  document.getElementById("mainMoment").textContent=x;
+
+  S.moves.main=(S.moves.main||0)+1;
+
+  S.xp+=2;
+  S.rewardPts+=2;
+
+  S.evidence.unshift({
+    date:S.date,
+    text:"Main Character Moment: "+x
+  });
+
+  save();
+
+}
+
+
+function battery(n){
+
+  S.battery[S.date]=n;
+
+  save();
+
+  document.getElementById("batteryResult").textContent=
+
+    n<=25
+    ?"Battery depleted. Protection plan, not performance plan."
+    :n<=50
+    ?"You're carrying a lot. Lower the bar."
+    :n<=75
+    ?"Spend your capacity intentionally."
+    :"You have room. Keep some for Tiffany.";
+
+}
+
+
+function addEvidence(){
+
+  let x=prompt(
+    "What is one receipt that proves the lie wrong?"
+  );
+
+  if(!x)return;
+
+  S.evidence.unshift({
+    date:S.date,
+    text:x
+  });
+
+  S.xp+=2;
+  S.rewardPts+=2;
+
+  save();
+
+  toast("+2 Proof XP");
+
+  render();
+
+}
+
+
+function savePlaybook(){
+
+  S.playbook=
+    document.getElementById("playbook").value;
+
+  save();
+
+  toast("Playbook saved");
+
+}
+
+
+function renderEvidence(){
+
+  document.getElementById("evidence").innerHTML=
+
+    (S.evidence||[])
+    .slice(0,20)
+    .map(e=>`
+
+      <div class="receipt">
+
+        ✓ <b>${e.date}</b>
+
+        <br>
+
+        ${e.text}
+
+      </div>
+
+    `)
+    .join("")
+
+    ||
+
+    "<p class='sub'>Your receipts will live here.</p>";
+
+}
+
+
+function renderWorld(){
+
+  document.getElementById("worldMap").innerHTML=
+
+    world.map(z=>{
+
+      let open=level()>=z[0];
+
+      return `
+
+        <div class="zone ${open?"":"locked"}">
+
+          <h3>
+            ${z[1]} ${z[2]} ${open?"✓":"🔒"}
+          </h3>
+
+          <div class="sub">
+            ${z[3]}
+          </div>
+
+          <div class="challenge">
+
+            <b>Challenge:</b>
+            ${z[4]}
+
+            <br>
+
+            <b>Reward:</b>
+            ${z[5]}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+function renderAchievements(){
+
+  let a=[
+
+    [
+      "First Move",
+      S.xp>=1,
+      "Earn your first XP"
+    ],
+
+    [
+      "Courage Starter",
+      S.courage>=5,
+      "Earn 5 Courage XP"
+    ],
+
+    [
+      "Receipt Collector",
+      S.evidence.length>=5,
+      "Collect 5 receipts"
+    ],
+
+    [
+      "Main Character",
+      (S.moves.main||0)>=5,
+      "Log 5 Main Character moments"
+    ],
+
+    [
+      "Brain Trainer",
+      (S.moves.debate||0)>=3,
+      "Interrupt 3 loops"
+    ],
+
+    [
+      "Quest Finisher",
+      S.questDone,
+      "Complete a quest"
+    ],
+
+    [
+      "Level 5",
+      level()>=5,
+      "Reach Level 5"
+    ],
+
+    [
+      "Kingdom",
+      level()>=8,
+      "Reach Level 8"
+    ]
+
+  ];
+
+  document.getElementById("achievements").innerHTML=
+
+    a.map(x=>`
+
+      <div class="achievement ${x[1]?"":"locked"}">
+
+        ${x[1]?"🏆":"🔒"}
+
+        <b>${x[0]}</b>
+
+        <div class="sub">
+          ${x[2]}
+        </div>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+function addReward(){
+
+  let input=
+    document.getElementById("rewardInput");
+
+  let x=input.value.trim();
+
+  if(!x)return;
+
+  S.rewards.unshift(x);
+
+  input.value="";
+
+  save();
+
+  render();
+
+}
+
+
+function redeem(){
+
+  if(S.rewardPts<25){
+
+    document.getElementById("redeemResult").textContent=
+      `You need ${25-S.rewardPts} more Reward Points.`;
+
+    return;
+
+  }
+
+  S.rewardPts-=25;
+
+  let x=
+    S.rewards[
+      Math.floor(Math.random()*S.rewards.length)
+    ]||"a reward you want";
+
+  save();
+
+  document.getElementById("redeemResult").innerHTML=`
+
+    <div class="quote">
+
+      🎉 <b>UNLOCKED:</b> ${x}
+
+    </div>
+
+  `;
+
+  render();
+
+}
+
+
+function renderRewards(){
+
+  document.getElementById("rewardPts").textContent=
+    S.rewardPts;
+
+  document.getElementById("rewardsList").innerHTML=
+
+    S.rewards.map(x=>`
+
+      <div class="reward">
+        🎁 ${x}
+      </div>
+
+    `).join("");
+
+  document.getElementById("trophies").innerHTML=
+
+    (S.achievements||[])
+    .map(x=>`
+
+      <div class="achievement">
+        🏆 ${x}
+      </div>
+
+    `).join("")
+
+    ||
+
+    "<p class='sub'>Your trophy room is waiting.</p>";
+
+}
+
+
+function friction(x){
+
+  S.friction[x]=(S.friction[x]||0)+1;
+
+  save();
+
+  document.getElementById("frictionResult").innerHTML=`
+
+    <div class="quote">
+
+      Logged: <b>${x}</b>.
+
+      This is data, not a character judgment.
+
+    </div>
+
+  `;
+
+  renderPatterns();
+
+}
+
+
+function renderPatterns(){
+
+  let c={...S.friction};
+
+  Object.entries(S.moves)
+    .forEach(([k,v])=>{
+      c[k]=(c[k]||0)+v;
+    });
+
+  let a=
+    Object.entries(c)
+    .sort((x,y)=>y[1]-x[1])
+    .slice(0,8);
+
+  document.getElementById("patterns").innerHTML=
+
+    a.map(([k,v])=>`
+
+      <div class="pattern">
+
+        <b>${k}</b>
+
+        <br>
+
+        <span class="sub">
+          ${v} logged interaction${v==1?"":"s"}
+        </span>
+
+      </div>
+
+    `).join("")
+
+    ||
+
+    "<p class='sub'>The app learns as you use it.</p>";
+
+}
+
+
+function renderReview(){
+
+  let days=
+    Object.keys(S.tasks).length;
+
+  let active=
+    Object.values(S.tasks)
+    .filter(x=>x.length)
+    .length;
+
+  let pct=
+    Math.min(
+      100,
+      Math.round(
+        active/Math.max(1,days)*100
+      )
+    );
+
+  document.getElementById("showScore").textContent=
+    pct+"%";
+
+  document.getElementById("showFill").style.width=
+    pct+"%";
+
+  document.getElementById("weeklyRecap").innerHTML=`
+
+    <div class="statline">
+      <span>Days with any self-care</span>
+      <b>${active}</b>
+    </div>
+
+    <div class="statline">
+      <span>XP</span>
+      <b>${S.xp}</b>
+    </div>
+
+    <div class="statline">
+      <span>Courage XP</span>
+      <b>${S.courage}</b>
+    </div>
+
+    <div class="statline">
+      <span>Evidence receipts</span>
+      <b>${S.evidence.length}</b>
+    </div>
+
+  `;
+
+  renderPatterns();
+
+}
+
+
+function wildcard(){
+
+  let x=[
+
+    "Take a guilt-free rest.",
+    "Go outside with music.",
+    "Use tuning forks.",
+    "Do one beauty/self-care action.",
+    "Write one honest sentence.",
+    "Do the smallest task you've been avoiding."
+
+  ][Math.floor(Math.random()*6)];
+
+  document.getElementById("wildResult").innerHTML=`
+
+    <div class="quote">
+      🎲 <b>WILDCARD:</b> ${x}
+    </div>
+
+  `;
+
+}
+
+
+function badDay(){
+
+  S.mode="survival";
+
+  save();
+
+  document.getElementById("badDayResult").innerHTML=`
+
+    <div class="quote">
+
+      🪫 Fumes-only mode activated.
+
+      The goal is care, not catching up.
+
+    </div>
+
+  `;
+
+  render();
+
+}
+
+
+function renderSystems(){
+
+  let l=level();
+
+  document.getElementById("systemDashboard").innerHTML=`
+
+    <div class="statline">
+      <span>⭐ XP</span>
+      <b>${S.xp}</b>
+    </div>
+
+    <div class="statline">
+      <span>🔥 Courage XP</span>
+      <b>${S.courage}</b>
+    </div>
+
+    <div class="statline">
+      <span>📈 Level</span>
+      <b>${l}</b>
+    </div>
+
+    <div class="statline">
+      <span>🪞 Evidence</span>
+      <b>${S.evidence.length}</b>
+    </div>
+
+    <div class="statline">
+      <span>👉 Just Tell Me uses</span>
+      <b>${S.moves.justTell||0}</b>
+    </div>
+
+    <div class="statline">
+      <span>🛑 Debate interruptions</span>
+      <b>${S.moves.debate||0}</b>
+    </div>
+
+    <div class="statline">
+      <span>⚖️ Court sessions</span>
+      <b>${S.moves.court||0}</b>
+    </div>
+
+    <div class="statline">
+      <span>🎁 Reward Points</span>
+      <b>${S.rewardPts}</b>
+    </div>
+
+  `;
+
+}
+
+
 function render(){
- ensure();let mt=modeText();document.getElementById("modeTitle").textContent=mt[0];document.getElementById("modeDesc").textContent=mt[1];
- document.getElementById("greeting").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})+" is yours.";
- document.getElementById("headerStats").textContent=`Level ${level()} • ${S.xp} XP • ${S.courage} Courage XP • ${S.rewardPts} Reward Points`;
- ["tmorning","tmidday","tevening","tnight"].forEach((id,i)=>{let k=["morning","midday","evening","night"][i];document.getElementById(id).value=S.times[k]});
- document.getElementById("tiffanyCount").textContent=S.tiffany;document.getElementById("lifeCount").textContent=S.life;
- renderPockets();quest();renderRoutine();renderReminders();renderLadder();renderEvidence();renderWorld();renderAchievements();renderRewards();renderReview();renderSystems();
+
+  ensure();
+
+  let mt=modeText();
+
+  document.getElementById("modeTitle").textContent=
+    mt[0];
+
+  document.getElementById("modeDesc").textContent=
+    mt[1];
+
+  document.getElementById("greeting").textContent=
+    new Date().toLocaleDateString(
+      undefined,
+      {
+        weekday:"long",
+        month:"long",
+        day:"numeric"
+      }
+    )+" is yours.";
+
+  document.getElementById("headerStats").textContent=
+    `Level ${level()} • ${S.xp} XP • ${S.courage} Courage XP • ${S.rewardPts} Reward Points`;
+
+  ["tmorning","tmidday","tevening","tnight"]
+    .forEach((id,i)=>{
+
+      let k=
+        ["morning","midday","evening","night"][i];
+
+      document.getElementById(id).value=
+        S.times[k];
+
+    });
+
+  document.getElementById("tiffanyCount").textContent=
+    S.tiffany;
+
+  document.getElementById("lifeCount").textContent=
+    S.life;
+
+  if(S.playbook){
+    document.getElementById("playbook").value=
+      S.playbook;
+  }
+
+  renderPockets();
+  quest();
+  renderRoutine();
+  renderReminders();
+  renderLadder();
+  renderEvidence();
+  renderWorld();
+  renderAchievements();
+  renderRewards();
+  renderReview();
+  renderSystems();
+
 }
+
+
 render();
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
+
+
+if("serviceWorker" in navigator){
+
+  window.addEventListener("load",()=>{
+
+    navigator.serviceWorker
+      .register("./sw.js")
+      .catch(()=>{});
+
+  });
+
+}
+
 </script>
+
 </body>
-</html>
+  </html>
